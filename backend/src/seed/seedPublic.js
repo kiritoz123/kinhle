@@ -1,5 +1,4 @@
-const dotenv = require('dotenv');
-dotenv.config();
+// backend/src/seedData.js
 const { sequelize } = require('../config/db');
 
 const Banner = require('../models/banner');
@@ -43,7 +42,7 @@ const run = async () => {
       await safeFindOrCreate(Master, { name: m.name }, m, `Master(${m.name})`);
     }
 
-    // Festivals with image + lunarDate
+    // Festivals
     const festivals = [
       { title: 'Tết Nguyên Đán', date: new Date(), lunarDate: '1/1 ÂL', image: 'https://example.com/tet.jpg', description: 'Tết là ngày...' },
       { title: 'Vu Lan', date: new Date(), lunarDate: '15/7 ÂL', image: 'https://example.com/vulan.jpg', description: 'Vu Lan là ngày...' },
