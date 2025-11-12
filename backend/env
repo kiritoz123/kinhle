@@ -2,8 +2,8 @@
 DB_HOST=localhost
 DB_PORT=3306
 DB_NAME=worship_app
-DB_USER=root
-DB_PASS=secret
+DB_USER=worship_user
+DB_PASS=worship_pass
 
 # Server / auth
 PORT=4000
