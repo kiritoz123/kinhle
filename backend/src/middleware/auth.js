@@ -6,7 +6,7 @@ exports.authenticate = async (req, res, next) => {
   if (!header) return res.status(401).json({ message: 'No token' });
   const token = header.split(' ')[1];
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = jwt.verify(token, "change_this_secret");
     const user = await User.findByPk(payload.id);
     if (!user) return res.status(401).json({ message: 'Invalid token' });
     req.user = user;
