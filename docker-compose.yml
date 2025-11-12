@@ -42,6 +42,13 @@ services:
       args:
         REACT_APP_API_URL: http://localhost:4000
     container_name: worship-admin
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: worship_app
+      DB_USER: worship_user
+      DB_PASS: worship_pass
+      PORT: 4000
     ports:
       - "3000:80"
     depends_on:
