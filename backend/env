@@ -1,0 +1,14 @@
+# MySQL connection
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=worship_app
+DB_USER=root
+DB_PASS=secret
+
+# Server / auth
+PORT=4000
+JWT_SECRET=change_this_secret
+
+# Admin seed (used by seed script)
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=admin123
