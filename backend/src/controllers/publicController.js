@@ -6,7 +6,7 @@ const Master = require('../models/master');
 const Payment = require('../models/payment');
 const User = require('../models/user');
 const SavedPrayer = require('../models/savedPrayer');
-
+const Blog = require('../models/blog');
 // GET /api/public/banners
 exports.getBanners = async (req, res) => {
   try {
