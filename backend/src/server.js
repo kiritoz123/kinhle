@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 dotenv.config();
 
 const { sequelize } = require('./config/db');
@@ -15,15 +16,24 @@ require('./models/savedPrayer');
 
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
-const publicRoutes = require('./routes/public'); 
+const publicRoutes = require('./routes/public');
+// new upload/user routes
+const uploadRoutes = require('./routes/upload');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// mount existing routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
+
+// serve uploaded files statically (accessible at /uploads/<userId>/<filename>)
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
+// mount user upload routes
+app.use('/api/user', uploadRoutes);
 
 app.get('/', (req, res) => res.send('Worship app backend (MySQL) running'));
 
