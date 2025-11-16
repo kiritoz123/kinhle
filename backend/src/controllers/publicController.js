@@ -57,6 +57,12 @@ exports.getMasters = async (req, res) => {
     res.status(500).json({ message: 'Error fetching masters', error: err.message });
   }
 };
+exports.listBlogs = async (req, res) => {
+  try {
+    const list = await Blog.findAll({ order: [['createdAt', 'DESC']] });
+    res.json(list);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+};
 
 // POST /api/public/prayers/purchase  (requires authenticate middleware)
 exports.purchaseTemplate = async (req, res) => {
