@@ -9,6 +9,7 @@ router.get('/festivals', publicCtrl.getFestivals);
 router.get('/festivals/:id', publicCtrl.getFestivalById);
 router.get('/prayers/templates', publicCtrl.getPrayerTemplates);
 router.get('/masters', publicCtrl.getMasters);
+router.get('/blogs', publicCtrl.listBlogs);
 
 // Purchase (requires auth)
 router.post('/prayers/purchase', authenticate, publicCtrl.purchaseTemplate);
