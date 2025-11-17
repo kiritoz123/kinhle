@@ -34,7 +34,8 @@ services:
     networks:
       - worship-network
     restart: unless-stopped
-
+    volumes:
+      - ./uploads:/app/uploads 
   admin:
     build:
       context: ./admin
