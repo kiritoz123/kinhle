@@ -29,7 +29,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
 
-// serve uploaded files statically (accessible at /uploads/<userId>/<filename>)
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // mount user upload routes
