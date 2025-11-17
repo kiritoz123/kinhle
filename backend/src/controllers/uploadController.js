@@ -11,7 +11,7 @@ const uploadSuccess = (req, res) => {
 
   const userId = String(req.user.id || req.user.userId || req.user.sub || 'unknown');
   const filename = req.file.filename;
-  const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${userId}/${filename}`;
+  const fileUrl = `https://wibu.tokyo/kinhle/uploads/${userId}/${filename}`;
 
   return res.status(201).json({
     message: 'File uploaded',
