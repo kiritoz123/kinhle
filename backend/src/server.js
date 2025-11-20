@@ -19,6 +19,7 @@ const adminRoutes = require('./routes/admin');
 const publicRoutes = require('./routes/public');
 // new upload/user routes
 const uploadRoutes = require('./routes/upload');
+const paymentRoutes = require('./routes/payment');
 
 const app = express();
 app.use(cors());
@@ -28,11 +29,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
-
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
-
-// mount user upload routes
-app.use('/api/user', uploadRoutes);
+app.use('/api/payment', paymentRoutes);
 
 app.get('/', (req, res) => res.send('Worship app backend (MySQL) running'));
 
