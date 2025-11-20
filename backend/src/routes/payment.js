@@ -1,25 +1,18 @@
-const { Model, DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
-const User = require('./user');
+const express = require('express');
+const router = express.Router();
+const { authenticate } = require('../middleware/auth');
+const payment = require('../controllers/paymentController');
 
-class Payment extends Model {}
-Payment.init({
-  amount: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
-  currency: { type: DataTypes.STRING, defaultValue: 'VND' },
-  method: { type: DataTypes.STRING, defaultValue: 'PayOS' },
-  orderCode: { type: DataTypes.STRING, unique: true },
-  status: { 
-    type: DataTypes.ENUM('pending', 'completed', 'failed', 'cancelled'),
-    defaultValue: 'pending' 
-  },
-  description: { type: DataTypes.TEXT }
-}, {
-  sequelize,
-  modelName: 'Payment',
-  timestamps: true
-});
+// Tạo link thanh toán
+router.post('/create', authenticate, payment.createPaymentLink);
 
-Payment.belongsTo(User, { as: 'user', foreignKey: 'userId' });
-User.hasMany(Payment, { as: 'payments', foreignKey: 'userId' });
+// Lấy thông tin thanh toán
+router.get('/info/:id', authenticate, payment.getPaymentInfo);
 
-module.exports = Payment;
+// Hủy thanh toán
+router.post('/cancel/:id', authenticate, payment.cancelPaymentLink);
+
+// Webhook callback (không cần auth)
+router.post('/callback', payment.paymentCallback);
+
+module.exports = router;
