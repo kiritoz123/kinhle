@@ -138,26 +138,77 @@ exports.cancelPaymentLink = async (req, res) => {
 // 4. Webhook callback
 exports.paymentCallback = async (req, res) => {
   try {
-    console.log("📩 Callback từ PayOS:", req.body);
+    console.log("📩 Callback từ PayOS:", JSON.stringify(req.body, null, 2));
     
-    const { orderCode, code } = req.body;
+    const { code, desc, data } = req.body;
 
-    if (code === "00") {
-      await Payment.update(
-        { status: 'completed' },
-        { where: { orderCode } }
-      );
-    } else {
-      await Payment.update(
-        { status: 'failed' },
-        { where: { orderCode } }
-      );
+    if (!data) {
+      console.error("❌ Webhook thiếu data");
+      return res.status(200).json({ success: false, message: "Missing data" });
     }
 
-    return res.status(200).json({ success: true });
+    const { 
+      orderCode, 
+      amount, 
+      description,
+      accountNumber,
+      reference,
+      transactionDateTime,
+      paymentLinkId,
+      counterAccountBankName,
+      counterAccountName,
+      counterAccountNumber
+    } = data;
+
+    // code === "00" nghĩa là giao dịch thành công
+    if (code === "00") {
+      // Tìm payment trong DB
+      const payment = await Payment.findOne({ where: { orderCode: String(orderCode) } });
+      
+      if (payment) {
+        await payment.update({
+          status: 'completed',
+          method: 'PayOS',
+          description: description || payment.description
+        });
+        
+        console.log(`✅ Thanh toán thành công:
+          - Order: ${orderCode}
+          - Số tiền: ${amount} VNĐ
+          - Người thanh toán: ${counterAccountName || 'N/A'}
+          - Ngân hàng: ${counterAccountBankName || 'N/A'}
+          - Thời gian: ${transactionDateTime}
+        `);
+        
+        // TODO: Thêm logic sau khi thanh toán thành công
+        // Ví dụ: Gửi email, cập nhật đơn hàng, kích hoạt dịch vụ...
+      } else {
+        console.warn(`⚠️ Không tìm thấy payment với orderCode: ${orderCode}`);
+      }
+    } else {
+      // Giao dịch thất bại
+      console.log(`❌ Giao dịch thất bại - Code: ${code}, Desc: ${desc}`);
+      
+      const payment = await Payment.findOne({ where: { orderCode: String(orderCode) } });
+      if (payment) {
+        await payment.update({ status: 'failed' });
+      }
+    }
+
+    // Luôn trả về 200 để PayOS biết đã nhận webhook
+    return res.status(200).json({ 
+      success: true,
+      message: "Webhook received" 
+    });
 
   } catch (error) {
-    console.error("❌ Lỗi callback:", error);
-    return res.status(500).json({ error: "Lỗi xử lý callback" });
+    console.error("❌ Lỗi xử lý callback:", error.message);
+    console.error(error.stack);
+    
+    // Vẫn trả 200 để tránh PayOS retry liên tục
+    return res.status(200).json({ 
+      success: false,
+      error: error.message 
+    });
   }
 };
