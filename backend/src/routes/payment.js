@@ -12,6 +12,9 @@ router.get('/info/:id', authenticate, payment.getPaymentInfo);
 // Hủy thanh toán
 router.post('/cancel/:id', authenticate, payment.cancelPaymentLink);
 
+// Kiểm tra trạng thái thanh toán (polling)
+router.get('/status/:orderCode', payment.checkPaymentStatus);
+
 // Webhook callback (không cần auth)
 router.post('/callback', payment.paymentCallback);
 
