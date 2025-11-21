@@ -199,14 +199,29 @@ exports.paymentCallback = async (req, res) => {
     // code === "00" nghĩa là giao dịch thành công
     if (code === "00") {
       // Tìm payment trong DB
-      const payment = await Payment.findOne({ where: { orderCode: String(orderCode) } });
+      const payment = await Payment.findOne({ 
+        where: { orderCode: String(orderCode) },
+        include: [{ model: require('../models/user'), as: 'user' }]
+      });
       
       if (payment) {
+        // Cập nhật trạng thái payment
         await payment.update({
           status: 'completed',
           method: 'PayOS',
           description: description || payment.description
         });
+        
+        // Cộng tiền vào tài khoản user
+        if (payment.userId) {
+          const User = require('../models/user');
+          await User.increment('balance', { 
+            by: amount, 
+            where: { id: payment.userId } 
+          });
+          
+          console.log(`💰 Đã cộng ${amount} VNĐ vào tài khoản user ID: ${payment.userId}`);
+        }
         
         console.log(`✅ Thanh toán thành công:
           - Order: ${orderCode}
@@ -215,9 +230,6 @@ exports.paymentCallback = async (req, res) => {
           - Ngân hàng: ${counterAccountBankName || 'N/A'}
           - Thời gian: ${transactionDateTime}
         `);
-        
-        // TODO: Thêm logic sau khi thanh toán thành công
-        // Ví dụ: Gửi email, cập nhật đơn hàng, kích hoạt dịch vụ...
       } else {
         console.warn(`⚠️ Không tìm thấy payment với orderCode: ${orderCode}`);
       }
