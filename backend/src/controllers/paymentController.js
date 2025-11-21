@@ -134,6 +134,42 @@ exports.cancelPaymentLink = async (req, res) => {
     });
   }
 };
+exports.checkPaymentStatus = async (req, res) => {
+  try {
+    const { orderCode } = req.params;
+
+    const payment = await Payment.findOne({ 
+      where: { orderCode },
+      attributes: ['id', 'orderCode', 'amount', 'status', 'description', 'createdAt', 'updatedAt']
+    });
+
+    if (!payment) {
+      return res.status(404).json({ 
+        success: false,
+        message: "Không tìm thấy giao dịch" 
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        orderCode: payment.orderCode,
+        amount: payment.amount,
+        status: payment.status, // pending, completed, failed, cancelled
+        description: payment.description,
+        createdAt: payment.createdAt,
+        updatedAt: payment.updatedAt
+      }
+    });
+
+  } catch (error) {
+    console.error("❌ Lỗi check status:", error);
+    return res.status(500).json({ 
+      success: false,
+      error: "Không thể kiểm tra trạng thái" 
+    });
+  }
+};
 
 // 4. Webhook callback
 exports.paymentCallback = async (req, res) => {
