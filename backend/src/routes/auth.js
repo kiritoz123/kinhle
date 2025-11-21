@@ -5,6 +5,6 @@ const { authenticate } = require('../middleware/auth');
 
 router.post('/login', authController.login);
 router.post('/register', authController.register);
-router.get('/me', authController.getMe); // Get thông tin user + balance
+router.get('/me', authenticate, authController.getMe); // Get thông tin user + balance
 
 module.exports = router;
