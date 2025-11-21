@@ -20,6 +20,31 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      attributes: ['id', 'email', 'name', 'balance', 'isAdmin', 'createdAt']
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User không tồn tại' });
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        balance: user.balance || 0,
+        isAdmin: user.isAdmin,
+        createdAt: user.createdAt
+      }
+    });
+  } catch (err) {
+    return res.status(500).json({ message: 'Lỗi server', error: err.message });
+  }
+};
 
 exports.register = async (req, res) => {
   try {
