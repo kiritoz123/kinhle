@@ -9,6 +9,8 @@ router.use(authenticate, requireAdmin);
 
 // Stats
 router.get('/stats', stats.getStats);
+router.get('/payments', stats.getPayments);
+router.get('/users', stats.getUsers);
 
 // Festivals CRUD
 router.post('/festivals', content.createFestival);
