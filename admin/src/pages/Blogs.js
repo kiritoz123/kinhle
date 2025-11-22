@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Typography, Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Switch, FormControlLabel, Box } from '@mui/material';
+import { Paper, Typography, Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Switch, FormControlLabel, Box, Select, MenuItem, FormControl, InputLabel, Chip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import API from '../api';
@@ -33,7 +33,7 @@ export default function Blogs() {
   const [list, setList] = useState([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ title: '', slug: '', content: '', published: false });
+  const [form, setForm] = useState({ title: '', slug: '', content: '', category: '', published: false });
 
   const load = async () => {
     const r = await API.get('/api/admin/blogs');
@@ -42,8 +42,8 @@ export default function Blogs() {
 
   useEffect(() => { load(); }, []);
 
-  const openNew = () => { setEditing(null); setForm({ title: '', slug: '', content: '', published: false }); setOpen(true); };
-  const openEdit = (b) => { setEditing(b); setForm({ title: b.title, slug: b.slug, content: b.content || '', published: b.published }); setOpen(true); };
+  const openNew = () => { setEditing(null); setForm({ title: '', slug: '', content: '', category: '', published: false }); setOpen(true); };
+  const openEdit = (b) => { setEditing(b); setForm({ title: b.title, slug: b.slug, content: b.content || '', category: b.category || '', published: b.published }); setOpen(true); };
 
   const save = async () => {
     if (editing) {
@@ -71,6 +71,7 @@ export default function Blogs() {
             <TableRow>
               <TableCell>Title</TableCell>
               <TableCell>Slug</TableCell>
+              <TableCell>Category</TableCell>
               <TableCell>Content Preview</TableCell>
               <TableCell>Published</TableCell>
               <TableCell>Actions</TableCell>
@@ -81,6 +82,9 @@ export default function Blogs() {
               <TableRow key={b.id || b._id}>
                 <TableCell>{b.title}</TableCell>
                 <TableCell>{b.slug}</TableCell>
+                <TableCell>
+                  {b.category && <Chip label={b.category} size="small" color="primary" />}
+                </TableCell>
                 <TableCell>
                   <div 
                     dangerouslySetInnerHTML={{ __html: b.content?.substring(0, 100) + '...' }} 
@@ -113,6 +117,23 @@ export default function Blogs() {
             onChange={e => setForm({ ...form, slug: e.target.value })} 
             fullWidth
           />
+
+          <FormControl fullWidth>
+            <InputLabel>Loại Bài Viết</InputLabel>
+            <Select
+              value={form.category}
+              label="Loại Bài Viết"
+              onChange={e => setForm({ ...form, category: e.target.value })}
+            >
+              <MenuItem value="">-- Không chọn --</MenuItem>
+              <MenuItem value="Tin tức">Tin tức</MenuItem>
+              <MenuItem value="Hướng dẫn">Hướng dẫn</MenuItem>
+              <MenuItem value="Văn hoá">Chia sẻ</MenuItem>
+              <MenuItem value="Phong tục">Sự kiện</MenuItem>
+              <MenuItem value="Ngày lễ">Kinh nghiệm</MenuItem>
+              <MenuItem value="Khác">Khác</MenuItem>
+            </Select>
+          </FormControl>
           
           <Box>
             <Typography variant="subtitle2" gutterBottom>Content (HTML Editor)</Typography>
