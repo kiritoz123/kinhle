@@ -13,6 +13,7 @@ require('./models/prayer');
 require('./models/banner');
 require('./models/master');
 require('./models/savedPrayer');
+const userRoutes = require('./routes/user');
 
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
@@ -30,7 +31,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/payment', paymentRoutes);
-
+app.use('/api/user', userRoutes);
 app.get('/', (req, res) => res.send('Worship app backend (MySQL) running'));
 
 const PORT = process.env.PORT || 4000;
