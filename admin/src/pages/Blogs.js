@@ -128,9 +128,9 @@ export default function Blogs() {
               <MenuItem value="">-- Không chọn --</MenuItem>
               <MenuItem value="Tin tức">Tin tức</MenuItem>
               <MenuItem value="Hướng dẫn">Hướng dẫn</MenuItem>
-              <MenuItem value="Văn hoá">Chia sẻ</MenuItem>
-              <MenuItem value="Phong tục">Sự kiện</MenuItem>
-              <MenuItem value="Ngày lễ">Kinh nghiệm</MenuItem>
+              <MenuItem value="Văn hoá">Văn Hoá</MenuItem>
+              <MenuItem value="Phong tục">Phong tục</MenuItem>
+              <MenuItem value="Ngày lễ">Ngày lễ</MenuItem>
               <MenuItem value="Khác">Khác</MenuItem>
             </Select>
           </FormControl>
