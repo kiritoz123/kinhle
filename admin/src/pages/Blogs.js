@@ -1,8 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Typography, Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Switch, FormControlLabel } from '@mui/material';
+import { Paper, Typography, Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Switch, FormControlLabel, Box } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import API from '../api';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+// Cấu hình toolbar cho editor
+const modules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    [{ 'indent': '-1'}, { 'indent': '+1' }],
+    [{ 'align': [] }],
+    ['link', 'image'],
+    [{ 'color': [] }, { 'background': [] }],
+    ['clean']
+  ]
+};
+
+const formats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike',
+  'list', 'bullet', 'indent',
+  'align',
+  'link', 'image',
+  'color', 'background'
+];
 
 export default function Blogs() {
   const [list, setList] = useState([]);
@@ -46,6 +71,7 @@ export default function Blogs() {
             <TableRow>
               <TableCell>Title</TableCell>
               <TableCell>Slug</TableCell>
+              <TableCell>Content Preview</TableCell>
               <TableCell>Published</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -55,6 +81,12 @@ export default function Blogs() {
               <TableRow key={b.id || b._id}>
                 <TableCell>{b.title}</TableCell>
                 <TableCell>{b.slug}</TableCell>
+                <TableCell>
+                  <div 
+                    dangerouslySetInnerHTML={{ __html: b.content?.substring(0, 100) + '...' }} 
+                    style={{ maxWidth: 300, overflow: 'hidden' }}
+                  />
+                </TableCell>
                 <TableCell>{b.published ? 'Yes' : 'No'}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => openEdit(b)}><EditIcon /></IconButton>
@@ -66,13 +98,43 @@ export default function Blogs() {
         </Table>
       </Paper>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="lg" fullWidth>
         <DialogTitle>{editing ? 'Edit Blog' : 'New Blog'}</DialogTitle>
-        <DialogContent sx={{ display: 'grid', gap: 2 }}>
-          <TextField label="Title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} fullWidth />
-          <TextField label="Slug" value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} />
-          <TextField label="Content" multiline rows={8} value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} fullWidth />
-          <FormControlLabel control={<Switch checked={form.published} onChange={e => setForm({ ...form, published: e.target.checked })} />} label="Published" />
+        <DialogContent sx={{ display: 'grid', gap: 2, pt: 2 }}>
+          <TextField 
+            label="Title" 
+            value={form.title} 
+            onChange={e => setForm({ ...form, title: e.target.value })} 
+            fullWidth 
+          />
+          <TextField 
+            label="Slug" 
+            value={form.slug} 
+            onChange={e => setForm({ ...form, slug: e.target.value })} 
+            fullWidth
+          />
+          
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>Content (HTML Editor)</Typography>
+            <ReactQuill 
+              theme="snow"
+              value={form.content}
+              onChange={(value) => setForm({ ...form, content: value })}
+              modules={modules}
+              formats={formats}
+              style={{ height: '300px', marginBottom: '50px' }}
+            />
+          </Box>
+
+          <FormControlLabel 
+            control={
+              <Switch 
+                checked={form.published} 
+                onChange={e => setForm({ ...form, published: e.target.checked })} 
+              />
+            } 
+            label="Published" 
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
