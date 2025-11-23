@@ -115,7 +115,7 @@ export default function Dashboard() {
     .slice(-30); // 30 ngày gần nhất
 
   return (
-    <Box sx={{ maxWidth: '100%', mx: 'auto' }}>
+    <Box sx={{ width: '100%' }}>
       <Typography variant="h4" gutterBottom fontWeight="bold">Dashboard Thống Kê</Typography>
       
       {/* Stats Cards */}
