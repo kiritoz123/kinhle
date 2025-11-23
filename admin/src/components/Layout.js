@@ -52,7 +52,7 @@ export default function Layout() {
         </List>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3, ml: '220px', mt: '80px' }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, mt: '80px', width: 'calc(100% - 220px)', ml: '220px' }}>
         <Outlet />
       </Box>
     </Box>
