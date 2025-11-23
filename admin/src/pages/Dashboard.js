@@ -15,6 +15,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [payments, setPayments] = useState([]);
+  const [allPayments, setAllPayments] = useState([]); // Tất cả giao dịch cho biểu đồ
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -43,6 +44,16 @@ export default function Dashboard() {
     }
   };
 
+  const fetchAllPayments = async () => {
+    try {
+      // Lấy tất cả giao dịch cho biểu đồ (giới hạn 1000)
+      const res = await API.get('/api/admin/payments?limit=1000');
+      setAllPayments(res.data.payments || []);
+    } catch (err) {
+      console.error('Error fetching all payments:', err);
+    }
+  };
+
   useEffect(() => {
     fetchPayments();
   }, [paymentPage, startDate, endDate]);
@@ -57,6 +68,9 @@ export default function Dashboard() {
         
         setStats(statsRes.data);
         setUsers(usersRes.data || []);
+        
+        // Lấy tất cả giao dịch cho biểu đồ
+        await fetchAllPayments();
       } catch (err) {
         console.error('Error fetching data:', err);
       } finally {
@@ -72,15 +86,16 @@ export default function Dashboard() {
   const formatDate = (date) => new Date(date).toLocaleDateString('vi-VN');
   const formatDateTime = (date) => new Date(date).toLocaleString('vi-VN');
 
-  // Dữ liệu cho biểu đồ
+  // Dữ liệu cho biểu đồ - Sử dụng allPayments (tất cả giao dịch)
   const paymentStatusData = [
-    { name: 'Thành công', value: payments.filter(p => p.status === 'completed').length },
-    { name: 'Đang chờ', value: payments.filter(p => p.status === 'pending').length },
-    { name: 'Thất bại', value: payments.filter(p => p.status === 'failed').length },
-    { name: 'Đã hủy', value: payments.filter(p => p.status === 'cancelled').length }
+    { name: 'Thành công', value: allPayments.filter(p => p.status === 'completed').length },
+    { name: 'Đang chờ', value: allPayments.filter(p => p.status === 'pending').length },
+    { name: 'Thất bại', value: allPayments.filter(p => p.status === 'failed').length },
+    { name: 'Đã hủy', value: allPayments.filter(p => p.status === 'cancelled').length }
   ].filter(d => d.value > 0);
 
-  const revenueData = payments
+  // Thống kê doanh thu 30 ngày gần nhất
+  const revenueData = allPayments
     .filter(p => p.status === 'completed')
     .reduce((acc, p) => {
       const date = new Date(p.createdAt).toLocaleDateString('vi-VN');
@@ -92,10 +107,15 @@ export default function Dashboard() {
       }
       return acc;
     }, [])
-    .slice(-7); // 7 ngày gần nhất
+    .sort((a, b) => {
+      const dateA = a.date.split('/').reverse().join('');
+      const dateB = b.date.split('/').reverse().join('');
+      return dateA.localeCompare(dateB);
+    })
+    .slice(-30); // 30 ngày gần nhất
 
   return (
-    <Box>
+    <Box sx={{ maxWidth: '100%', mx: 'auto' }}>
       <Typography variant="h4" gutterBottom fontWeight="bold">Dashboard Thống Kê</Typography>
       
       {/* Stats Cards */}
@@ -183,7 +203,7 @@ export default function Dashboard() {
 
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>Doanh Thu 7 Ngày Gần Nhất</Typography>
+            <Typography variant="h6" gutterBottom>Doanh Thu 30 Ngày Gần Nhất</Typography>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={revenueData}>
                 <CartesianGrid strokeDasharray="3 3" />
