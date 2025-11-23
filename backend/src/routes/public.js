@@ -10,6 +10,8 @@ router.get('/festivals/:id', publicCtrl.getFestivalById);
 router.get('/prayers/templates', publicCtrl.getPrayerTemplates);
 router.get('/masters', publicCtrl.getMasters);
 router.get('/blogs', publicCtrl.listBlogs);
+router.get('/practices', publicCtrl.getPractices);
+router.get('/items', publicCtrl.getItems);
 
 // Purchase (requires auth)
 router.post('/prayers/purchase', authenticate, publicCtrl.purchaseTemplate);

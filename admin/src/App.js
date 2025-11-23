@@ -8,6 +8,8 @@ import Prayers from './pages/Prayers';
 import Templates from './pages/Templates';
 import Banners from './pages/Banner';
 import Masters from './pages/Masters';
+import Practices from './pages/Practices';
+import Items from './pages/Items';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -33,6 +35,8 @@ export default function App() {
         <Route path="templates" element={<Templates />} />
         <Route path="banners" element={<Banners />} />
         <Route path="masters" element={<Masters />} />
+        <Route path="practices" element={<Practices />} />
+        <Route path="items" element={<Items />} />
       </Route>
 
       {/* fallback to home */}

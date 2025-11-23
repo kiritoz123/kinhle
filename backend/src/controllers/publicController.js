@@ -7,6 +7,8 @@ const Payment = require('../models/payment');
 const User = require('../models/user');
 const SavedPrayer = require('../models/savedPrayer');
 const Blog = require('../models/blog');
+const Practice = require('../models/practice');
+const Item = require('../models/item');
 // GET /api/public/banners
 exports.getBanners = async (req, res) => {
   try {
@@ -119,5 +121,39 @@ exports.saveChecklist = async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ message: 'Error saving checklist', error: err.message });
+  }
+};
+
+// GET /api/public/practices?festivalType=...
+exports.getPractices = async (req, res) => {
+  try {
+    const { festivalType } = req.query;
+    const where = { isActive: true };
+    if (festivalType) where.festivalType = festivalType;
+    
+    const practices = await Practice.findAll({
+      where,
+      order: [['order', 'ASC'], ['createdAt', 'DESC']]
+    });
+    res.json(practices);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching practices', error: err.message });
+  }
+};
+
+// GET /api/public/items?festivalType=...
+exports.getItems = async (req, res) => {
+  try {
+    const { festivalType } = req.query;
+    const where = { isActive: true };
+    if (festivalType) where.festivalType = festivalType;
+    
+    const items = await Item.findAll({
+      where,
+      order: [['order', 'ASC'], ['createdAt', 'DESC']]
+    });
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching items', error: err.message });
   }
 };

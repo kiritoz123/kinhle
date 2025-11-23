@@ -8,6 +8,8 @@ import MenuBookIcon from '@mui/icons-material/MenuBook';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import PeopleIcon from '@mui/icons-material/People';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ChecklistIcon from '@mui/icons-material/Checklist';
+import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 
 export default function Layout() {
   const navigate = useNavigate();
@@ -24,6 +26,8 @@ export default function Layout() {
     { label: 'Templates', to: '/templates', icon: <MenuBookIcon /> },
     { label: 'Banners', to: '/banners', icon: <PhotoLibraryIcon /> },
     { label: 'Masters', to: '/masters', icon: <PeopleIcon /> },
+    { label: 'Practices', to: '/practices', icon: <ChecklistIcon /> },
+    { label: 'Items', to: '/items', icon: <ShoppingBasketIcon /> },
   ];
 
   return (

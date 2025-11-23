@@ -35,20 +35,48 @@ exports.getStats = async (req, res) => {
   }
 };
 
-// Lấy danh sách payments
+// Lấy danh sách payments với phân trang và filter theo ngày
 exports.getPayments = async (req, res) => {
   try {
-    const payments = await Payment.findAll({
+    const { page = 1, limit = 10, startDate, endDate } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+    
+    const where = {};
+    
+    // Filter theo ngày nếu có
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        where.createdAt[Op.gte] = start;
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        where.createdAt[Op.lte] = end;
+      }
+    }
+
+    const { count, rows } = await Payment.findAndCountAll({
+      where,
       include: [{ 
         model: User, 
         as: 'user',
         attributes: ['id', 'email', 'name']
       }],
       order: [['createdAt', 'DESC']],
-      limit: 100
+      limit: parseInt(limit),
+      offset: offset
     });
 
-    res.json(payments);
+    res.json({
+      payments: rows,
+      total: count,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      totalPages: Math.ceil(count / parseInt(limit))
+    });
   } catch (err) {
     console.error('getPayments error', err);
     res.status(500).json({ message: 'Error fetching payments', error: err.message });

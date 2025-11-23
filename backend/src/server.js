@@ -13,6 +13,8 @@ require('./models/prayer');
 require('./models/banner');
 require('./models/master');
 require('./models/savedPrayer');
+require('./models/practice');
+require('./models/item');
 const userRoutes = require('./routes/user');
 
 const authRoutes = require('./routes/auth');

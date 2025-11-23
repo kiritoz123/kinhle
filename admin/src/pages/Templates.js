@@ -1,8 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Typography, Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Switch, FormControlLabel } from '@mui/material';
+import { Paper, Typography, Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Box, FormControlLabel, Switch } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import API from '../api';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+const quillModules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    [{ 'align': [] }],
+    ['link'],
+    [{ 'color': [] }],
+    ['clean']
+  ]
+};
 
 export default function Templates() {
   const [list, setList] = useState([]);
@@ -64,11 +78,20 @@ export default function Templates() {
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>{editing ? 'Edit Template' : 'New Template'}</DialogTitle>
-        <DialogContent sx={{ display: 'grid', gap: 2 }}>
+        <DialogContent sx={{ display: 'grid', gap: 2, pt: 2 }}>
           <TextField label="Title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} fullWidth />
           <TextField label="Occasion" value={form.occasion} onChange={e => setForm({ ...form, occasion: e.target.value })} />
           <TextField label="Price (coin)" type="number" value={form.price} onChange={e => setForm({ ...form, price: Number(e.target.value) })} />
-          <TextField label="Content" multiline rows={8} value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} fullWidth />
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>Content</Typography>
+            <ReactQuill 
+              theme="snow"
+              value={form.content}
+              onChange={(value) => setForm({ ...form, content: value })}
+              modules={quillModules}
+              style={{ height: '250px', marginBottom: '50px' }}
+            />
+          </Box>
           <FormControlLabel control={<Switch checked={form.isTemplate} onChange={e => setForm({ ...form, isTemplate: e.target.checked })} />} label="Is Template" />
         </DialogContent>
         <DialogActions>

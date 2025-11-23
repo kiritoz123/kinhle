@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { 
   Grid, Paper, Typography, CircularProgress, Box, Table, TableBody, 
-  TableCell, TableContainer, TableHead, TableRow, Chip, Card, CardContent 
+  TableCell, TableContainer, TableHead, TableRow, Chip, Card, CardContent,
+  Pagination, TextField, Button
 } from '@mui/material';
 import { 
   PeopleAlt, AccountBalanceWallet, TrendingUp, CheckCircle 
@@ -16,18 +17,45 @@ export default function Dashboard() {
   const [payments, setPayments] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Pagination & Filter for payments
+  const [paymentPage, setPaymentPage] = useState(1);
+  const [paymentTotal, setPaymentTotal] = useState(0);
+  const [paymentTotalPages, setPaymentTotalPages] = useState(0);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const fetchPayments = async () => {
+    try {
+      const params = new URLSearchParams({
+        page: paymentPage,
+        limit: 10
+      });
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
+      
+      const res = await API.get(`/api/admin/payments?${params.toString()}`);
+      setPayments(res.data.payments || []);
+      setPaymentTotal(res.data.total || 0);
+      setPaymentTotalPages(res.data.totalPages || 0);
+    } catch (err) {
+      console.error('Error fetching payments:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPayments();
+  }, [paymentPage, startDate, endDate]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsRes, paymentsRes, usersRes] = await Promise.all([
+        const [statsRes, usersRes] = await Promise.all([
           API.get('/api/admin/stats'),
-          API.get('/api/admin/payments'),
           API.get('/api/admin/users')
         ]);
         
         setStats(statsRes.data);
-        setPayments(paymentsRes.data || []);
         setUsers(usersRes.data || []);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -41,7 +69,8 @@ export default function Dashboard() {
   if (loading) return <Box display="flex" justifyContent="center" mt={5}><CircularProgress /></Box>;
 
   const formatMoney = (amount) => new Intl.NumberFormat('vi-VN').format(amount || 0);
-  const formatDate = (date) => new Date(date).toLocaleString('vi-VN');
+  const formatDate = (date) => new Date(date).toLocaleDateString('vi-VN');
+  const formatDateTime = (date) => new Date(date).toLocaleString('vi-VN');
 
   // Dữ liệu cho biểu đồ
   const paymentStatusData = [
@@ -170,7 +199,35 @@ export default function Dashboard() {
 
       {/* Bảng Thanh Toán */}
       <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>Lịch Sử Thanh Toán</Typography>
+        <Typography variant="h6" gutterBottom>Lịch Sử Thanh Toán ({paymentTotal} giao dịch)</Typography>
+        
+        {/* Bộ lọc theo ngày */}
+        <Box sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
+          <TextField
+            label="Từ ngày"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            size="small"
+          />
+          <TextField
+            label="Đến ngày"
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            size="small"
+          />
+          <Button 
+            variant="outlined" 
+            onClick={() => { setStartDate(''); setEndDate(''); setPaymentPage(1); }}
+            size="small"
+          >
+            Xóa bộ lọc
+          </Button>
+        </Box>
+
         <TableContainer>
           <Table>
             <TableHead>
@@ -181,11 +238,11 @@ export default function Dashboard() {
                 <TableCell><strong>Số Tiền</strong></TableCell>
                 <TableCell><strong>Trạng Thái</strong></TableCell>
                 <TableCell><strong>Mô Tả</strong></TableCell>
-                <TableCell><strong>Thời Gian</strong></TableCell>
+                <TableCell><strong>Ngày Tạo</strong></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {payments.slice(0, 10).map((payment) => (
+              {payments.map((payment) => (
                 <TableRow key={payment.id} hover>
                   <TableCell>{payment.id}</TableCell>
                   <TableCell>{payment.user?.email || 'N/A'}</TableCell>
@@ -209,6 +266,16 @@ export default function Dashboard() {
             </TableBody>
           </Table>
         </TableContainer>
+        
+        {/* Phân trang */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+          <Pagination 
+            count={paymentTotalPages} 
+            page={paymentPage} 
+            onChange={(e, page) => setPaymentPage(page)}
+            color="primary"
+          />
+        </Box>
       </Paper>
 
       {/* Bảng Users */}
@@ -240,7 +307,7 @@ export default function Dashboard() {
                       color={user.isAdmin ? 'primary' : 'default'}
                     />
                   </TableCell>
-                  <TableCell>{formatDate(user.createdAt)}</TableCell>
+                  <TableCell>{formatDateTime(user.createdAt)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -3,6 +3,7 @@ const router = express.Router();
 const { authenticate, requireAdmin } = require('../middleware/auth');
 const content = require('../controllers/contentController');
 const stats = require('../controllers/statsController');
+const guide = require('../controllers/guideController');
 
 // Apply auth + admin to all admin routes
 router.use(authenticate, requireAdmin);
@@ -41,5 +42,17 @@ router.post('/masters', content.createMaster);
 router.get('/masters', content.listMasters);
 router.put('/masters/:id', content.updateMaster);
 router.delete('/masters/:id', content.deleteMaster);
+
+// Practices CRUD
+router.post('/practices', guide.createPractice);
+router.get('/practices', guide.listPractices);
+router.put('/practices/:id', guide.updatePractice);
+router.delete('/practices/:id', guide.deletePractice);
+
+// Items CRUD
+router.post('/items', guide.createItem);
+router.get('/items', guide.listItems);
+router.put('/items/:id', guide.updateItem);
+router.delete('/items/:id', guide.deleteItem);
 
 module.exports = router;

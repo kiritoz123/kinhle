@@ -1,8 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Typography, Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
+import { Paper, Typography, Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Box } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import API from '../api';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+const quillModules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    [{ 'align': [] }],
+    ['link'],
+    [{ 'color': [] }],
+    ['clean']
+  ]
+};
 
 export default function Festivals() {
   const [list, setList] = useState([]);
@@ -72,7 +86,16 @@ export default function Festivals() {
           <TextField label="Date" type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} InputLabelProps={{ shrink: true }} />
           <TextField label="Lunar Date" value={form.lunarDate} onChange={e => setForm({ ...form, lunarDate: e.target.value })} />
           <TextField label="Image URL" value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} />
-          <TextField label="Description" multiline rows={4} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} fullWidth />
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>Description</Typography>
+            <ReactQuill 
+              theme="snow"
+              value={form.description}
+              onChange={(value) => setForm({ ...form, description: value })}
+              modules={quillModules}
+              style={{ height: '200px', marginBottom: '50px' }}
+            />
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>

@@ -1,8 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Typography, Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
+import { Paper, Typography, Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, FormControlLabel, Switch, Box } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import API from '../api';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+const quillModules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    [{ 'align': [] }],
+    ['link'],
+    [{ 'color': [] }],
+    ['clean']
+  ]
+};
 
 export default function Prayers() {
   const [list, setList] = useState([]);
@@ -66,13 +80,22 @@ export default function Prayers() {
         </Table>
       </Paper>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>{editing ? 'Edit Prayer' : 'New Prayer'}</DialogTitle>
-        <DialogContent sx={{ display: 'grid', gap: 2 }}>
+        <DialogContent sx={{ display: 'grid', gap: 2, pt: 2 }}>
           <TextField label="Title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} fullWidth />
           <TextField label="Category" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} />
           <TextField label="Language" value={form.language} onChange={e => setForm({ ...form, language: e.target.value })} />
-          <TextField label="Content" multiline rows={6} value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} fullWidth />
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>Content</Typography>
+            <ReactQuill 
+              theme="snow"
+              value={form.content}
+              onChange={(value) => setForm({ ...form, content: value })}
+              modules={quillModules}
+              style={{ height: '250px', marginBottom: '50px' }}
+            />
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
