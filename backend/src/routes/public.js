@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const publicCtrl = require('../controllers/publicController');
+const shopCtrl = require('../controllers/shopController');
 const { authenticate } = require('../middleware/auth');
 
 // Public read endpointss
@@ -12,6 +13,12 @@ router.get('/masters', publicCtrl.getMasters);
 router.get('/blogs', publicCtrl.listBlogs);
 router.get('/practices', publicCtrl.getPractices);
 router.get('/items', publicCtrl.getItems);
+
+// Shops & Products (public)
+router.get('/shops', shopCtrl.listShops);
+router.get('/shops/:id', shopCtrl.getShop);
+router.get('/products', shopCtrl.listProducts);
+router.get('/products/:id', shopCtrl.getProduct);
 
 // Purchase (requires auth)
 router.post('/prayers/purchase', authenticate, publicCtrl.purchaseTemplate);

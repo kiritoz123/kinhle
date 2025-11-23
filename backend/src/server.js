@@ -5,7 +5,7 @@ const path = require('path');
 dotenv.config();
 
 const { sequelize } = require('./config/db');
-require('./models/user');
+const User = require('./models/user');
 require('./models/payment');
 require('./models/festival');
 require('./models/blog');
@@ -15,7 +15,15 @@ require('./models/master');
 require('./models/savedPrayer');
 require('./models/practice');
 require('./models/item');
+const Shop = require('./models/shop');
+const Product = require('./models/product');
 const userRoutes = require('./routes/user');
+
+// Thiết lập relationships
+User.hasOne(Shop, { as: 'shop', foreignKey: 'userId' });
+Shop.belongsTo(User, { as: 'user', foreignKey: 'userId' });
+Shop.hasMany(Product, { as: 'products', foreignKey: 'shopId' });
+Product.belongsTo(Shop, { as: 'shop', foreignKey: 'shopId' });
 
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');

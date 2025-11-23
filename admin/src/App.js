@@ -10,6 +10,7 @@ import Banners from './pages/Banner';
 import Masters from './pages/Masters';
 import Practices from './pages/Practices';
 import Items from './pages/Items';
+import Shops from './pages/Shops';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="masters" element={<Masters />} />
         <Route path="practices" element={<Practices />} />
         <Route path="items" element={<Items />} />
+        <Route path="shops" element={<Shops />} />
       </Route>
 
       {/* fallback to home */}

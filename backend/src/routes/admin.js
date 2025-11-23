@@ -4,6 +4,8 @@ const { authenticate, requireAdmin } = require('../middleware/auth');
 const content = require('../controllers/contentController');
 const stats = require('../controllers/statsController');
 const guide = require('../controllers/guideController');
+const shop = require('../controllers/shopController');
+const userShop = require('../controllers/userShopController');
 
 // Apply auth + admin to all admin routes
 router.use(authenticate, requireAdmin);
@@ -54,5 +56,22 @@ router.post('/items', guide.createItem);
 router.get('/items', guide.listItems);
 router.put('/items/:id', guide.updateItem);
 router.delete('/items/:id', guide.deleteItem);
+
+// Shops CRUD
+router.post('/shops', shop.createShop);
+router.get('/shops', shop.listShops);
+router.get('/shops/:id', shop.getShop);
+router.put('/shops/:id', shop.updateShop);
+router.delete('/shops/:id', shop.deleteShop);
+
+// Products CRUD
+router.post('/products', shop.createProduct);
+router.get('/products', shop.listProducts);
+router.get('/products/:id', shop.getProduct);
+router.put('/products/:id', shop.updateProduct);
+router.delete('/products/:id', shop.deleteProduct);
+
+// Shop Approval
+router.put('/shops/:id/approve', userShop.approveShop);
 
 module.exports = router;

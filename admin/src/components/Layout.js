@@ -28,6 +28,7 @@ export default function Layout() {
     { label: 'Masters', to: '/masters', icon: <PeopleIcon /> },
     { label: 'Practices', to: '/practices', icon: <ChecklistIcon /> },
     { label: 'Items', to: '/items', icon: <ShoppingBasketIcon /> },
+    { label: 'Shops', to: '/shops', icon: <ShoppingBasketIcon /> },
   ];
 
   return (
