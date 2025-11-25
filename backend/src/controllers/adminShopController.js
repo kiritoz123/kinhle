@@ -59,7 +59,12 @@ exports.createShop = async (req, res) => {
   try {
     const { userId, name, description, owner, phone, address, logo, rating, status, isActive } = req.body;
     
-    // Kiểm tra userId tồn tại
+    // Kiểm tra name là bắt buộc
+    if (!name) {
+      return res.status(400).json({ error: 'Tên shop là bắt buộc' });
+    }
+    
+    // Nếu có userId, kiểm tra user tồn tại
     if (userId) {
       const user = await User.findByPk(userId);
       if (!user) {
@@ -68,7 +73,7 @@ exports.createShop = async (req, res) => {
     }
     
     const shop = await Shop.create({
-      userId,
+      userId: userId || null, // userId có thể null nếu admin tạo shop hệ thống
       name,
       description,
       owner,

@@ -63,11 +63,25 @@ export default function Shops() {
   };
 
   const save = async () => {
-    const payload = { ...form };
-    if (editing) await API.put(`/api/admin/shops/${editing.id}`, payload);
-    else await API.post('/api/admin/shops', payload);
-    setOpen(false); 
-    load();
+    try {
+      const payload = { ...form };
+      
+      // Nếu tạo mới shop, lấy userId từ token của admin hiện tại
+      if (!editing) {
+        const token = localStorage.getItem('admin_token');
+        if (token) {
+          const decoded = JSON.parse(atob(token.split('.')[1]));
+          payload.userId = decoded.id;
+        }
+      }
+      
+      if (editing) await API.put(`/api/admin/shops/${editing.id}`, payload);
+      else await API.post('/api/admin/shops', payload);
+      setOpen(false); 
+      load();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Có lỗi xảy ra');
+    }
   };
 
   const remove = async (id) => {
