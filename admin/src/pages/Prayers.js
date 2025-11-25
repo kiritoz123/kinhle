@@ -22,7 +22,7 @@ export default function Prayers() {
   const [list, setList] = useState([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ title: '', content: '', category: '', language: 'vi' });
+  const [form, setForm] = useState({ title: '', content: '', category: '', language: 'vi', imageUrl: '' });
 
   const load = async () => {
     const r = await API.get('/api/admin/prayers');
@@ -31,8 +31,8 @@ export default function Prayers() {
 
   useEffect(() => { load(); }, []);
 
-  const openNew = () => { setEditing(null); setForm({ title: '', content: '', category: '', language: 'vi' }); setOpen(true); };
-  const openEdit = (p) => { setEditing(p); setForm({ title: p.title, content: p.content || '', category: p.category || '', language: p.language || 'vi' }); setOpen(true); };
+  const openNew = () => { setEditing(null); setForm({ title: '', content: '', category: '', language: 'vi', imageUrl: '' }); setOpen(true); };
+  const openEdit = (p) => { setEditing(p); setForm({ title: p.title, content: p.content || '', category: p.category || '', language: p.language || 'vi', imageUrl: p.imageUrl || '' }); setOpen(true); };
 
   const save = async () => {
     if (editing) {
@@ -86,6 +86,19 @@ export default function Prayers() {
           <TextField label="Title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} fullWidth />
           <TextField label="Category" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} />
           <TextField label="Language" value={form.language} onChange={e => setForm({ ...form, language: e.target.value })} />
+          <TextField 
+            label="URL ảnh minh họa" 
+            value={form.imageUrl} 
+            onChange={e => setForm({ ...form, imageUrl: e.target.value })} 
+            fullWidth
+            placeholder="https://example.com/image.jpg"
+          />
+          {form.imageUrl && (
+            <Box>
+              <Typography variant="subtitle2" gutterBottom>Preview ảnh:</Typography>
+              <img src={form.imageUrl} alt="Preview" style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'cover', borderRadius: 8 }} />
+            </Box>
+          )}
           <Box>
             <Typography variant="subtitle2" gutterBottom>Content</Typography>
             <ReactQuill 

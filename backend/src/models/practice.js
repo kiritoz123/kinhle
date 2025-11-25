@@ -13,6 +13,11 @@ Practice.init({
     allowNull: false,
     comment: 'Nội dung hướng dẫn chi tiết'
   },
+  imageUrl: { 
+    type: DataTypes.STRING, 
+    allowNull: true,
+    comment: 'URL ảnh minh họa cho practice'
+  },
   festivalType: { 
     type: DataTypes.STRING, 
     allowNull: true,

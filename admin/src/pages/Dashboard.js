@@ -25,6 +25,10 @@ export default function Dashboard() {
   const [paymentTotalPages, setPaymentTotalPages] = useState(0);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  
+  // Pagination for users
+  const [userPage, setUserPage] = useState(1);
+  const usersPerPage = 10;
 
   const fetchPayments = async () => {
     try {
@@ -84,7 +88,6 @@ export default function Dashboard() {
 
   const formatMoney = (amount) => new Intl.NumberFormat('vi-VN').format(amount || 0);
   const formatDate = (date) => new Date(date).toLocaleDateString('vi-VN');
-  const formatDateTime = (date) => new Date(date).toLocaleString('vi-VN');
 
   // Dữ liệu cho biểu đồ - Sử dụng allPayments (tất cả giao dịch)
   const paymentStatusData = [
@@ -300,7 +303,7 @@ export default function Dashboard() {
 
       {/* Bảng Users */}
       <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>Danh Sách Users</Typography>
+        <Typography variant="h6" gutterBottom>Danh sách người dùng ({users.length} users)</Typography>
         <TableContainer>
           <Table>
             <TableHead>
@@ -314,25 +317,37 @@ export default function Dashboard() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.slice(0, 10).map((user) => (
-                <TableRow key={user.id} hover>
-                  <TableCell>{user.id}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.name || '-'}</TableCell>
-                  <TableCell><strong>{formatMoney(user.balance || 0)} ₫</strong></TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={user.isAdmin ? 'Admin' : 'User'} 
-                      size="small"
-                      color={user.isAdmin ? 'primary' : 'default'}
-                    />
-                  </TableCell>
-                  <TableCell>{formatDateTime(user.createdAt)}</TableCell>
-                </TableRow>
-              ))}
+              {users
+                .slice((userPage - 1) * usersPerPage, userPage * usersPerPage)
+                .map((user) => (
+                  <TableRow key={user.id} hover>
+                    <TableCell>{user.id}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.name || '-'}</TableCell>
+                    <TableCell><strong>{formatMoney(user.balance || 0)} ₫</strong></TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={user.isAdmin ? 'Admin' : 'User'} 
+                        size="small"
+                        color={user.isAdmin ? 'primary' : 'default'}
+                      />
+                    </TableCell>
+                    <TableCell>{formatDate(user.createdAt)}</TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
+        
+        {/* Phân trang cho Users */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+          <Pagination 
+            count={Math.ceil(users.length / usersPerPage)} 
+            page={userPage} 
+            onChange={(e, page) => setUserPage(page)}
+            color="primary"
+          />
+        </Box>
       </Paper>
     </Box>
   );

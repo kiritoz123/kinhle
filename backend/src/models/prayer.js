@@ -7,6 +7,11 @@ Prayer.init({
   content: { type: DataTypes.TEXT },
   category: { type: DataTypes.STRING },
   language: { type: DataTypes.STRING, defaultValue: 'vi' },
+  imageUrl: { 
+    type: DataTypes.STRING, 
+    allowNull: true,
+    comment: 'URL ảnh minh họa cho lời khấn'
+  },
 
   // fields for templates / public use
   isTemplate: { type: DataTypes.BOOLEAN, defaultValue: false },

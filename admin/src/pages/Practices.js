@@ -25,6 +25,7 @@ export default function Practices() {
   const [form, setForm] = useState({ 
     title: '', 
     content: '', 
+    imageUrl: '',
     festivalType: '', 
     order: 0, 
     isActive: true 
@@ -41,7 +42,7 @@ export default function Practices() {
 
   const openNew = () => { 
     setEditing(null); 
-    setForm({ title: '', content: '', festivalType: '', order: 0, isActive: true }); 
+    setForm({ title: '', content: '', imageUrl: '', festivalType: '', order: 0, isActive: true }); 
     setOpen(true); 
   };
   
@@ -50,6 +51,7 @@ export default function Practices() {
     setForm({ 
       title: item.title, 
       content: item.content || '', 
+      imageUrl: item.imageUrl || '',
       festivalType: item.festivalType || '', 
       order: item.order || 0, 
       isActive: item.isActive !== false 
@@ -112,6 +114,19 @@ export default function Practices() {
             onChange={e => setForm({ ...form, title: e.target.value })} 
             fullWidth 
           />
+          <TextField 
+            label="URL ảnh minh họa" 
+            value={form.imageUrl} 
+            onChange={e => setForm({ ...form, imageUrl: e.target.value })} 
+            fullWidth
+            placeholder="https://example.com/image.jpg"
+          />
+          {form.imageUrl && (
+            <Box>
+              <Typography variant="subtitle2" gutterBottom>Preview ảnh:</Typography>
+              <img src={form.imageUrl} alt="Preview" style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'cover', borderRadius: 8 }} />
+            </Box>
+          )}
           <Box>
             <Typography variant="subtitle2" gutterBottom>Nội dung</Typography>
             <ReactQuill 
