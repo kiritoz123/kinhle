@@ -16,7 +16,7 @@ exports.getAllShops = async (req, res) => {
       include: [{
         model: User,
         as: 'user',
-        attributes: ['id', 'name', 'email', 'phone']
+        attributes: ['id', 'name', 'email']
       }],
       order: [['createdAt', 'DESC']]
     });
@@ -35,7 +35,7 @@ exports.getShopDetail = async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'name', 'email', 'phone']
+          attributes: ['id', 'name', 'email']
         },
         {
           model: Product,
